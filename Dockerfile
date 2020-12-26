@@ -133,13 +133,13 @@ RUN wget ftp://ftp.openssl.org/source/old/1.0.2/openssl-1.0.2h.tar.gz && \
 RUN apt-get install -y libglib2.0-dev libgtk2.0-dev libgl1-mesa-dev libxcb-glx0-dev libx11-xcb-dev && \
     apt-get clean
 
-RUN wget --no-check-certificate http://download.qt.io/new_archive/qt/5.6/5.6.2/single/qt-everywhere-opensource-src-5.6.2.tar.gz && \
-    tar -xvpf qt-everywhere-opensource-src-5.6.2.tar.gz && \
-    cd qt-everywhere-opensource-src-5.6.2 && \
+RUN wget --no-check-certificate http://download.qt.io/new_archive/qt/5.6/5.6.3/single/qt-everywhere-opensource-src-5.6.3.tar.xz && \
+    tar -xvpf qt-everywhere-opensource-src-5.6.3.tar.xz && \
+    cd qt-everywhere-opensource-src-5.6.3 && \
     mkdir build && \
     cd build && \
     OPENSSL_LIBS='-L/usr/local/lib64 -lssl -lcrypto' \
-    ../configure -prefix /opt/qt-5.6.2-static -opensource -confirm-license -release -strip -static \
+    ../configure -prefix /opt/qt-5.6.3-static -opensource -confirm-license -release -strip -static \
       -qt-sql-sqlite -no-sql-mysql -no-sql-odbc -no-sql-psql -no-sql-sqlite2 -no-sql-tds \
       -no-qml-debug -platform linux-g++-64 -no-sse3 -no-ssse3 -no-sse4.1 -no-sse4.2 -no-avx -no-avx2 \
       -system-zlib -no-mtdev -no-journald -system-libpng -qt-libjpeg -system-freetype -qt-harfbuzz -openssl-linked -no-libproxy -qt-pcre \
@@ -155,4 +155,4 @@ RUN wget --no-check-certificate http://download.qt.io/new_archive/qt/5.6/5.6.2/s
     make -j4 && \
     make install && \
     cd ../.. && \
-    rm -rf qt-everywhere-opensource-src-5.6.2.tar.gz qt-everywhere-opensource-src-5.6.2
+    rm -rf qt-everywhere-opensource-src-5.6.3.tar.xz qt-everywhere-opensource-src-5.6.3
