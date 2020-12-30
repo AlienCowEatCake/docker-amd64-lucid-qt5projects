@@ -5,14 +5,12 @@ CMD ["/bin/bash"]
 RUN groupadd --gid 1000 user && \
     useradd --shell /bin/bash --home-dir /home/user --uid 1000 --gid 1000 --create-home user
 
-RUN sed -i 's/^deb \(.*\)$/deb \1\ndeb-src \1\n/' /etc/apt/sources.list && \
-    apt-get update
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends wget build-essential m4 && \
+    apt-get install -y --no-install-recommends libglib2.0-dev libgtk2.0-dev libgl1-mesa-dev libxcb-glx0-dev libx11-xcb-dev && \
+    apt-get clean
 
 WORKDIR /usr/src
-
-RUN apt-get build-dep -y gcc && \
-    apt-get install -y wget && \
-    apt-get clean
 
 RUN wget --no-check-certificate https://www.openssl.org/source/openssl-1.1.1i.tar.gz && \
     tar -xvpf openssl-1.1.1i.tar.gz && \
@@ -77,18 +75,6 @@ RUN wget ftp://ftp.gnu.org/gnu/gcc/gcc-4.8.5/gcc-4.8.5.tar.bz2 && \
     cd .. && \
     rm -rf gcc-4.8.5.tar.bz2 gcc-4.8.5
 
-RUN apt-get build-dep -y openssl && \
-    apt-get clean
-
-RUN wget --no-check-certificate http://cmake.org/files/v3.19/cmake-3.19.2.tar.gz && \
-    tar -xvpf cmake-3.19.2.tar.gz && \
-    cd cmake-3.19.2 && \
-    ./configure --no-qt-gui --prefix=/usr/local -- -DCMAKE_USE_OPENSSL=OFF && \
-    make -j4 && \
-    make install && \
-    cd .. && \
-    rm -rf cmake-3.19.2.tar.gz cmake-3.19.2
-
 RUN wget --no-check-certificate http://zlib.net/fossils/zlib-1.2.11.tar.gz && \
     tar -xvpf zlib-1.2.11.tar.gz && \
     cd zlib-1.2.11 && \
@@ -103,7 +89,9 @@ RUN wget ftp://ftp.simplesystems.org/pub/libpng/png/src/libpng16/libpng-1.6.37.t
     cd libpng-1.6.37 && \
     mkdir build && \
     cd build && \
-    CC=/usr/local/bin/gcc CXX=/usr/local/bin/g++ CPP=/usr/local/bin/cpp CFLAGS="-m64 -g0" CXXFLAGS="-m64 -g0" cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DPNG_SHARED=NO -DPNG_STATIC=YES -DPNG_TESTS=NO .. && \
+    wget --no-check-certificate https://cmake.org/files/v3.6/cmake-3.6.3-Linux-x86_64.tar.gz && \
+    tar -xvpf cmake-3.6.3-Linux-x86_64.tar.gz && \
+    CC=/usr/local/bin/gcc CXX=/usr/local/bin/g++ CPP=/usr/local/bin/cpp CFLAGS="-m64 -g0" CXXFLAGS="-m64 -g0" cmake-3.6.3-Linux-x86_64/bin/cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DPNG_SHARED=NO -DPNG_STATIC=YES -DPNG_TESTS=NO .. && \
     make -j4 && \
     make install && \
     cd ../.. && \
@@ -123,15 +111,12 @@ RUN wget ftp://ftp.openssl.org/source/old/1.0.2/openssl-1.0.2u.tar.gz && \
     cd openssl-1.0.2u && \
     setarch x86_64 ./Configure linux-x86_64 -m64 --prefix=/usr/local --openssldir=/etc/ssl zlib no-shared && \
     make depend && \
-    make && \
+    make -j4 && \
     make install && \
     cd .. && \
     rm -rf openssl-1.0.2u.tar.gz openssl-1.0.2u
 
 # ====================================================================================================
-
-RUN apt-get install -y libglib2.0-dev libgtk2.0-dev libgl1-mesa-dev libxcb-glx0-dev libx11-xcb-dev && \
-    apt-get clean
 
 RUN wget --no-check-certificate http://download.qt.io/new_archive/qt/5.6/5.6.3/single/qt-everywhere-opensource-src-5.6.3.tar.xz && \
     tar -xvpf qt-everywhere-opensource-src-5.6.3.tar.xz && \
